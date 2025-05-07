@@ -10,27 +10,31 @@ sql() {
   psql -h $HOST -p $PORT -d $DBNAME -U $USER -c "$1"
 }
 
-# arg: table
+# arg1: table
+# arg2: timestamp
 get_start_date() {
   read start_date <<< $(psql -h $HOST -p $PORT -d $DBNAME -U $USER -t -A -c \
-    "SELECT MIN(tracked_at) FROM $1;")
+    "SELECT MIN($2) FROM $1;")
   date=$(echo "$start_date" | cut -d' ' -f1)
   echo $date
 }
 
-# arg: table
+# arg1: table
+# arg2: timestamp
 get_end_date() {
   read end_date <<< $(psql -h $HOST -p $PORT -d $DBNAME -U $USER -t -A -c \
-    "SELECT MAX(tracked_at) FROM $1;")
+    "SELECT MAX($2) FROM $1;")
   date=$(echo "$end_date" | cut -d' ' -f1)
   echo $date
 }
 
-# arg: table
+# arg1: table
+# arg2: timestamp
+# arg3: select
 main() {
   ## get start and end date
-  start_date=$(get_start_date "$1")
-  end_date=$(get_end_date "$1")
+  start_date=$(get_start_date "$1" "$2")
+  end_date=$(get_end_date "$1" "$2")
 
   ## loop by month
   current_date=$start_date
@@ -41,9 +45,9 @@ main() {
 
     ## execute main query
     sql "\copy (
-      SELECT * FROM $1
-      WHERE tracked_at >= DATE '$current_date'
-      AND tracked_at < DATE '$next_month'
+      SELECT $3 FROM $1
+      WHERE $2 >= DATE '$current_date'
+      AND $2 < DATE '$next_month'
     ) TO '$1_${year}_${month}.csv' WITH CSV HEADER DELIMITER ';'"
 
     ## increment
@@ -51,11 +55,30 @@ main() {
   done
 }
 
+SELECT="id user_id tracked_at latitude longitude geom created_at accuracy speed altitude"
+motion_tag_waypoint() {
+  main "motion_tag_waypoint" "tracked_at" "$SELECT"
+}
+
+motion_tag_waypoint_covid() {
+  main "motion_tag_waypoint_covid" "tracked_at" "$SELECT"
+}
+
+motion_tag_trips() {
+  main "motion_tag_trips" "started_at" "*"
+}
+
 case "$1" in
-  dump)
-    main "$2"
+  motion_tag_waypoint)
+    motion_tag_waypoint
+    ;;
+  motion_tag_waypoint_covid)
+    motion_tag_waypoint
+    ;;
+  motion_tag_trips)
+    motion_tag_waypoint
     ;;
   *)
-    echo "Usage $0 dump <table>"
+    echo "Usage $0 {motion_tag_waypoint|motion_tag_covid|motion_tag_trips}"
     ;;
 esac
