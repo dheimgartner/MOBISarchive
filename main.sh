@@ -1,25 +1,61 @@
 #!/bin/bash
 
-# Database credentials
+HOST="id-hdb-psgr-cp50.ethz.ch"
+PORT=5432
+DBNAME="mobis_study"
+USER="mobis"
 
-DB_USER="USER"
+# arg: sql code to execute
+sql() {
+  psql -h $HOST -p $PORT -d $DBNAME -U $USER -c "$1"
+}
 
-DB_NAME="DB"
+# arg: table
+get_start_date() {
+  read start_date <<< $(psql -h $HOST -p $PORT -d $DBNAME -U $USER -t -A -c \
+    "SELECT MIN(tracked_at) FROM $1;")
+  date=$(echo "$start_date" | cut -d' ' -f1)
+  echo $date
+}
 
-# Loop through each month of 2019
+# arg: table
+get_end_date() {
+  read end_date <<< $(psql -h $HOST -p $PORT -d $DBNAME -U $USER -t -A -c \
+    "SELECT MAX(tracked_at) FROM $1;")
+  date=$(echo "$end_date" | cut -d' ' -f1)
+  echo $date
+}
 
-for month in {01..12}
+# arg: table
+main() {
+  ## get start and end date
+  start_date=$(get_start_date "$1")
+  end_date=$(get_end_date "$1")
 
-do
+  ## loop by month
+  current_date=$start_date
+  while [[ "$current_date" < "$end_date" ]]; do
+    year=$(date -d "$current_date" +%Y)
+    month=$(date -d "$current_date" +%m)
+    next_month=$(date -d "$current_date + 1 month" +%Y-%m-%d)
 
-    # Define the start and end date for the month
+    ## execute main query
+    sql "\copy (
+      SELECT * FROM $1
+      WHERE tracked_at >= DATE '$current_date'
+      AND tracked_at < DATE '$next_month'
+    ) TO '$1_${year}_${month}.csv' WITH CSV HEADER DELIMITER ';'"
 
-    START_DATE="2019-$month-01"
+    ## increment
+    current_date=$next_month
+  done
+}
 
-    END_DATE="2019-$month-31"
-
-    # Export data to CSV
-
-    psql -U $DB_USER -d $DB_NAME -c "\copy (SELECT * FROM example_table WHERE timestamp_col >= DATE '$START_DATE' AND timestamp_col < (DATE '$START_DATE' + INTERVAL '1 month')) TO 'export_2019_$month.csv' CSV HEADER"
-
-done
+case "$1" in
+  dump)
+    main "$2"
+    ;;
+  *)
+    echo "Usage $0 dump <table>"
+    ;;
+esac
