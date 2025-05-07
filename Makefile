@@ -1,6 +1,7 @@
 .PHONY: all mount motion_tag_trips motion_tag_waypoint motion_tag_waypoint_covid
 
-all: mount motion_tag_trips motion_tag_waypoint motion_tag_waypoint_covid
+all:
+	@time $(MAKE) mount motion_tag_trips motion_tag_waypoint motion_tag_waypoint_covid
 
 mount:
 	sudo mount -t drvfs E: /mnt/e
