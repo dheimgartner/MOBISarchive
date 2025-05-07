@@ -79,10 +79,10 @@ case "$1" in
     motion_tag_waypoint
     ;;
   motion_tag_waypoint_covid)
-    motion_tag_waypoint
+    motion_tag_waypoint_covid
     ;;
   motion_tag_trips)
-    motion_tag_waypoint
+    motion_tag_trips
     ;;
   *)
     echo "Usage $0 {motion_tag_waypoint|motion_tag_waypoint_covid|motion_tag_trips}"
