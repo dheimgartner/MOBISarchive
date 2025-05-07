@@ -1,6 +1,6 @@
 #!/bin/bash
 
-STORAGE="./tmp"
+STORAGE="/mnt/e/mobis-archive"
 
 HOST="id-hdb-psgr-cp50.ethz.ch"
 PORT=5432
