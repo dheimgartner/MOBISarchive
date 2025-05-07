@@ -1,5 +1,7 @@
 #!/bin/bash
 
+STORAGE="."
+
 HOST="id-hdb-psgr-cp50.ethz.ch"
 PORT=5432
 DBNAME="mobis_study"
@@ -54,7 +56,7 @@ main() {
       SELECT $3 FROM $1
       WHERE $2 >= DATE '$current_date'
       AND $2 < DATE '$next_month'
-    ) TO '$1_${year}_${month}.csv' WITH CSV HEADER DELIMITER ';'"
+    ) TO '$STORAGE/$1_${year}_${month}.csv' WITH CSV HEADER DELIMITER ';'"
 
     ## increment
     current_date=$next_month
