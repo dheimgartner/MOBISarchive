@@ -14,9 +14,9 @@ Create ~10GB .csv chunks from the following tables
 
 ## Questions
 
--[ ] motion_tag_trips: trajectories storable in .csv?
+-[x] motion_tag_trips: trajectories storable in .csv? => japp (see dev.R)
 
 ## TODO
 
--[ ] Example .csv from the tables above
+-[x] Example .csv from the tables above
 -[ ] What variables to store?
