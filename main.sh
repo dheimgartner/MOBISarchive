@@ -28,6 +28,12 @@ get_end_date() {
   echo $date
 }
 
+# arg: YYYY-MM-DD
+get_floor_date() {
+  date=$(date -d "$1" +%Y-%m-01)
+  echo "$date"
+}
+
 # arg1: table
 # arg2: timestamp
 # arg3: select
@@ -37,7 +43,7 @@ main() {
   end_date=$(get_end_date "$1" "$2")
 
   ## loop by month
-  current_date=$start_date
+  current_date=$(get_floor_date "$start_date")
   while [[ "$current_date" < "$end_date" ]]; do
     year=$(date -d "$current_date" +%Y)
     month=$(date -d "$current_date" +%m)
@@ -55,7 +61,7 @@ main() {
   done
 }
 
-SELECT="id user_id tracked_at latitude longitude geom created_at accuracy speed altitude"
+SELECT="id, user_id, tracked_at, latitude, longitude, geom, created_at, accuracy, speed, altitude"
 motion_tag_waypoint() {
   main "motion_tag_waypoint" "tracked_at" "$SELECT"
 }
