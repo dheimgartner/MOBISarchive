@@ -1,6 +1,6 @@
 #!/bin/bash
 
-STORAGE="."
+STORAGE="./tmp"
 
 HOST="id-hdb-psgr-cp50.ethz.ch"
 PORT=5432
