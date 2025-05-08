@@ -38,3 +38,23 @@ ggplot() +
   geom_sf(data = switzerland, fill = "black") +
   geom_sf(data = trips, col = "red", lwd = 1, alpha = 0.2) +
   theme_minimal()
+
+
+
+## documentation
+devtools::load_all()
+library(tidyverse)
+library(sf)
+
+file <- "motion_tag_waypoint_covid_2023_01.csv"
+path <- paste0("/mnt/e/mobis-archive/", file)
+
+dat <- readr::read_delim(path, delim = ";")
+geom <- dat$geom
+class(geom) <- "pq_geometry"
+geom <- st_as_sfc(geom, crs = 4326)
+
+file <- "motion_tag_trips_2023_01.csv"
+path <- paste0("/mnt/e/mobis-archive/", file)
+
+dat <- readr::read_delim(path, delim = ";")
