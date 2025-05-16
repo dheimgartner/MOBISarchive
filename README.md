@@ -52,4 +52,4 @@ The following variables are available
 - detected_geometry: Geometry as detected by the app (geometry)
 - purpose: Purpose of the trip (character varying)
 - detected_purpose: Purpose as detected by the app (character varying)
-- oversease: Trip overseas, not originating in Switzerland (boolean)
+- overseas: Trip overseas, not originating in Switzerland (boolean)

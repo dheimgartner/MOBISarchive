@@ -63,18 +63,18 @@ main() {
   done
 }
 
-SELECT="id, user_id, tracked_at, created_at, latitude, longitude, geom, accuracy, altitude"
+SELECT_WAYPOINTS="id, user_id, tracked_at, created_at, latitude, longitude, geom, accuracy, altitude"
 motion_tag_waypoint() {
-  main "motion_tag_waypoint" "tracked_at" "$SELECT"
+  main "motion_tag_waypoint" "tracked_at" "$SELECT_WAYPOINTS"
 }
 
 motion_tag_waypoint_covid() {
-  main "motion_tag_waypoint_covid" "tracked_at" "$SELECT"
+  main "motion_tag_waypoint_covid" "tracked_at" "$SELECT_WAYPOINTS"
 }
 
-SELECT="uuid, user_id, mt_trip_id, merged_into_id, started_at, finished_at, detected_finished_at, created_at, confirmed_at, updated_at, misdetected_completely, type, length, detected_length, detected_mode, mode, geometry, detected_geometry, purpose, detected_purpose, oversease"
+SELECT_TRIPS="uuid, user_id, mt_trip_id, merged_into_id, started_at, finished_at, detected_finished_at, created_at, confirmed_at, updated_at, misdetected_completely, type, length, detected_length, detected_mode, mode, geometry, detected_geometry, purpose, detected_purpose, overseas"
 motion_tag_trips() {
-  main "motion_tag_trips" "started_at" "$SELECT"
+  main "motion_tag_trips" "started_at" "$SELECT_TRIPS"
 }
 
 case "$1" in
